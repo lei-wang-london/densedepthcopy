@@ -102,7 +102,7 @@ class DenseDepth(nn.Module):
         super(DenseDepth, self).__init__()
 
         self.encoder = Encoder(encoder_pretrained=encoder_pretrained)
-        self.decoder = Decoder(skip_conv)
+        self.decoder = Decoder(skip_conv=skip_conv)
 
     def forward(self, x):
 
