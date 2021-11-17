@@ -73,6 +73,9 @@ def main():
         "--enc_pretrain", "-p", default=True, type=bool, help="Use pretrained encoder"
     )
     parser.add_argument(
+        "--skip_conv", "-k", default=False, type=bool, help="Skip 1 layer of conv"
+    )
+    parser.add_argument(
         "--data", default="data/nyu_data.zip", type=str, help="path to dataset"
     )
     parser.add_argument(
@@ -120,6 +123,7 @@ def main():
             lr=args.lr,
             ckpt=args.checkpoint,
             device=device,
+            skip_conv=args.skip_conv
         )
         print("Resuming from: epoch #{}".format(start_epoch))
 
@@ -133,6 +137,7 @@ def main():
             lr=args.lr,
             ckpt=None,
             device=device,
+            skip_conv=args.skip_conv
         )
 
     # Logging

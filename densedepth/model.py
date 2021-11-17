@@ -31,7 +31,7 @@ class Upsample(nn.Module):
         self.leakyrelu = nn.LeakyReLU(0.2)
         self.convB = nn.Conv2d(output_channels, output_channels, 3, 1, 1)
 
-    def forward(self, x, concat_with):
+    def forward(self, x, concat_with, skip_conv = False):
 
         concat_h_dim = concat_with.shape[2]
         concat_w_dim = concat_with.shape[3]
@@ -43,14 +43,16 @@ class Upsample(nn.Module):
 
         upsampled_x = self.convA(upsampled_x)
         upsampled_x = self.leakyrelu(upsampled_x)
-        upsampled_x = self.convB(upsampled_x)
-        upsampled_x = self.leakyrelu(upsampled_x)
+
+        if not skip_conv:
+            upsampled_x = self.convB(upsampled_x)
+            upsampled_x = self.leakyrelu(upsampled_x)
 
         return upsampled_x
 
 
 class Decoder(nn.Module):
-    def __init__(self, num_features=2208, decoder_width=0.5, scales=[1, 2, 4, 8]):
+    def __init__(self, num_features=2208, decoder_width=0.5, scales=[1, 2, 4, 8], skip_conv = False):
 
         super(Decoder, self).__init__()
 
@@ -59,16 +61,20 @@ class Decoder(nn.Module):
         self.conv2 = nn.Conv2d(num_features, features, 1, 1, 1)
 
         self.upsample1 = Upsample(
-            features // scales[0] + 384, features // (scales[0] * 2)
+            features // scales[0] + 384, features // (scales[0] * 2),
+            skip_conv
         )
         self.upsample2 = Upsample(
-            features // scales[1] + 192, features // (scales[1] * 2)
+            features // scales[1] + 192, features // (scales[1] * 2),
+            skip_conv
         )
         self.upsample3 = Upsample(
-            features // scales[2] + 96, features // (scales[2] * 2)
+            features // scales[2] + 96, features // (scales[2] * 2),
+            skip_conv
         )
         self.upsample4 = Upsample(
-            features // scales[3] + 96, features // (scales[3] * 2)
+            features // scales[3] + 96, features // (scales[3] * 2),
+            skip_conv
         )
 
         self.conv3 = nn.Conv2d(features // (scales[3] * 2), 1, 3, 1, 1)
@@ -91,12 +97,12 @@ class Decoder(nn.Module):
 
 
 class DenseDepth(nn.Module):
-    def __init__(self, encoder_pretrained=True):
+    def __init__(self, encoder_pretrained=True, skip_conv = False):
 
         super(DenseDepth, self).__init__()
 
         self.encoder = Encoder(encoder_pretrained=encoder_pretrained)
-        self.decoder = Decoder()
+        self.decoder = Decoder(skip_conv)
 
     def forward(self, x):
 
