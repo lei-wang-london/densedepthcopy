@@ -72,12 +72,13 @@ def init_or_load_model(
     ckpt=None,
     device=torch.device("cuda:0"),
     loss_meter=None,
+    skip_conv = False
 ):
 
     if ckpt is not None:
         checkpoint = torch.load(ckpt)
 
-    model = depthmodel(encoder_pretrained=enc_pretrain)
+    model = depthmodel(encoder_pretrained=enc_pretrain, skip_conv = skip_conv)
 
     if ckpt is not None:
         model.load_state_dict(checkpoint["model_state_dict"])
