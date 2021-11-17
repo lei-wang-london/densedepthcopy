@@ -163,7 +163,7 @@ def main():
         for idx, batch in enumerate(trainloader):
 
             if idx > args.skip_index:
-                continue
+                break
 
             optimizer.zero_grad()
 
