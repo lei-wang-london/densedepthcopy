@@ -25,6 +25,9 @@ def main():
         "--data", type=str, default="examples/", help="Path to dataset zip file"
     )
     parser.add_argument(
+        "--output_path", type=str, default="/", help="Path to output folder"
+    )
+    parser.add_argument(
         "--cmap",
         type=str,
         default="plasma",
@@ -50,14 +53,25 @@ def main():
     img_list = glob(args.data + "*.png")
 
     # making processed image directory
+    
+    # try:
+    #     os.mkdir("examples/processed/")
+    # except FileExistsError:
+    #     shutil.rmtree("examples/processed/")
+    #     os.mkdir("examples/processed/")
+    #     pass
+
+    # save_path = "examples/processed/"
+
     try:
-        os.mkdir("examples/processed/")
+        os.mkdir(args.output_path)
     except FileExistsError:
-        shutil.rmtree("examples/processed/")
-        os.mkdir("examples/processed/")
+        shutil.rmtree(args.output_path)
+        os.mkdir(args.output_path)
         pass
 
-    save_path = "examples/processed/"
+    save_path = args.output_path
+    
 
     # Set model to eval mode
     model.eval()

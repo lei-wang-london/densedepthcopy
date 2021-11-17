@@ -56,6 +56,13 @@ def main():
         help="epoch to resume training from",
     )
     parser.add_argument(
+        "--skip_index",
+        "-i",
+        default=100000000,
+        type=int,
+        help="index of the input files at which to skip",
+    )
+    parser.add_argument(
         "--device",
         "-d",
         default="cuda",
@@ -88,6 +95,7 @@ def main():
     # Load data
     print("Loading Data ...")
     trainloader, testloader = getTrainingTestingData(args.data, batch_size=args.batch)
+    trainloader = trainloader[:3]
     print("Dataloaders ready ...")
     num_trainloader = len(trainloader)
     num_testloader = len(testloader)
@@ -154,6 +162,9 @@ def main():
         end = time.time()
 
         for idx, batch in enumerate(trainloader):
+
+            if idx > args.skip_index:
+                continue
 
             optimizer.zero_grad()
 
