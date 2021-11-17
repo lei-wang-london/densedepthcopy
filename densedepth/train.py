@@ -95,7 +95,6 @@ def main():
     # Load data
     print("Loading Data ...")
     trainloader, testloader = getTrainingTestingData(args.data, batch_size=args.batch)
-    trainloader = trainloader[:3]
     print("Dataloaders ready ...")
     num_trainloader = len(trainloader)
     num_testloader = len(testloader)
