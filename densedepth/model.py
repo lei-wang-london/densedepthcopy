@@ -20,7 +20,7 @@ class Encoder(nn.Module):
 
 
 class Upsample(nn.Module):
-    def __init__(self, input_channels, output_channels):
+    def __init__(self, input_channels, output_channels, skip_conv = False):
 
         super(Upsample, self).__init__()
 
@@ -30,8 +30,9 @@ class Upsample(nn.Module):
         self.convA = nn.Conv2d(input_channels, output_channels, 3, 1, 1)
         self.leakyrelu = nn.LeakyReLU(0.2)
         self.convB = nn.Conv2d(output_channels, output_channels, 3, 1, 1)
+        self.skip_conv = skip_conv
 
-    def forward(self, x, concat_with, skip_conv = False):
+    def forward(self, x, concat_with):
 
         concat_h_dim = concat_with.shape[2]
         concat_w_dim = concat_with.shape[3]
@@ -44,7 +45,7 @@ class Upsample(nn.Module):
         upsampled_x = self.convA(upsampled_x)
         upsampled_x = self.leakyrelu(upsampled_x)
 
-        if not skip_conv:
+        if not self.skip_conv:
             upsampled_x = self.convB(upsampled_x)
             upsampled_x = self.leakyrelu(upsampled_x)
 
