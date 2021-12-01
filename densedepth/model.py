@@ -101,9 +101,15 @@ class DenseDepth(nn.Module):
     def __init__(self, encoder_pretrained=True, skip_conv = False):
 
         super(DenseDepth, self).__init__()
-
+        # QuantStub converts tensors from floating point to quantized
+        self.quant = torch.quantization.QuantStub()
+        
         self.encoder = Encoder(encoder_pretrained=encoder_pretrained)
         self.decoder = Decoder(skip_conv=skip_conv)
+        
+        # DeQuantStub converts tensors from quantized to floating point
+        self.dequant = torch.quantization.DeQuantStub()
+
 
     def forward(self, x):
 
